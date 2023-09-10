@@ -5,6 +5,8 @@ from .magicprompt import DPMagicPrompt
 from .output_node import OutputString
 from .random import DPRandomGenerator
 
+from .dp_server import dp_server
+
 NODE_CLASS_MAPPINGS = {
     "DPRandomGenerator": DPRandomGenerator,
     "DPCombinatorialGenerator": DPCombinatorialGenerator,
