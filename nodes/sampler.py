@@ -4,6 +4,7 @@ import logging
 from abc import ABC, abstractproperty
 from collections.abc import Iterable
 from pathlib import Path
+import os
 
 from dynamicprompts.sampling_context import SamplingContext
 from dynamicprompts.wildcards import WildcardManager
@@ -41,7 +42,12 @@ class DPAbstractSamplerNode(ABC):
         First look in the comfy_dynamicprompts folder, then in the custom_nodes folder, then in the Comfui base folder.
         """
         from folder_paths import base_path, folder_names_and_paths
-
+		
+        if "WILDCARDS_FOLDER" in os.environ:
+            wildcards_folder = Path(os.environ.get("WILDCARDS_FOLDER"))
+            if wildcards_folder.exists():
+                return Path(wildcards_folder)
+        
         wildcard_path = Path(base_path) / "wildcards"
 
         if wildcard_path.exists():
