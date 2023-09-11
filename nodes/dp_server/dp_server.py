@@ -1,8 +1,13 @@
 from aiohttp import web
+from functools import lru_cache
 
 import server
 
 from ..random import DPRandomGenerator
+
+@lru_cache(maxsize=1)
+def get_generator(template_text) :
+    return DPRandomGenerator()
 
 @server.PromptServer.instance.routes.post("/dynamicprompts/random")
 async def generate_random(request : web.Request):
@@ -16,8 +21,9 @@ async def generate_random(request : web.Request):
         return web.Response(status=404, reason="missing template in request")
 
     try:
-        generator = DPRandomGenerator()
-        prompt = generator.get_prompt(query["template"].strip())
+        template_text = query["template"].strip()
+        generator = get_generator(template_text)
+        prompt = generator.get_prompt(template_text)
 
         return web.json_response({"prompt": prompt[0].strip()})
     except Exception as ex:
